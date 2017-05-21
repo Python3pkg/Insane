@@ -34,7 +34,7 @@ def main(argv):
     try:
         options = OPTIONS.parse(argv[1:])
     except simopt.SimoptHelp:
-        print(OPTIONS.help(argv[1:]))
+        print((OPTIONS.help(argv[1:])))
         return 0
     except simopt.MissingMandatoryError as e:
         print(e)

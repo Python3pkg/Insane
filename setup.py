@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function, absolute_import
+
 from setuptools import setup
 
 # Read the version from a file to be sure it is consistent with the version

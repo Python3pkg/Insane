@@ -88,7 +88,7 @@ class Lipid:
 
         if not self.coords:
             if self.beads and self.template:
-                stuff = zip(self.beads, self.template)
+                stuff = list(zip(self.beads, self.template))
                 self.coords = [[i, x, y, z] for i, (x, y, z) in stuff if i != "-"]
             else:
                 # Set beads/structure from head/link/tail
@@ -107,16 +107,16 @@ class Lipid:
                 length = len(self.head)+taillength
 
                 # Add the pseudocoordinates for the head
-                rl     = range(len(self.head))
+                rl     = list(range(len(self.head)))
                 struc  = [(0, 0, length-i) for i in rl]
 
                 # Add the linkers
-                rl     = range(len(self.link))
+                rl     = list(range(len(self.link)))
                 struc.extend([(i%2, i//2, taillength) for i in rl ])
 
                 # Add the tails
                 for j, tail in enumerate(self.tail):
-                    rl = range(len(tail))
+                    rl = list(range(len(tail)))
                     struc.extend([(j%2, j//2, taillength-1-i) for i in rl])
 
                 mx, my, mz = [ (max(i)+min(i))/2 for i in zip(*struc) ]
@@ -205,7 +205,7 @@ class Lipid_List(collections.MutableMapping):
     def add_from_def(self, usrnames, usrheads, usrlinks, usrtails, usrcharges):
         if not usrcharges:
             usrcharges = [None] * len(usrnames)
-        lipids = zip(usrnames, usrheads, usrlinks, usrtails, usrcharges)
+        lipids = list(zip(usrnames, usrheads, usrlinks, usrtails, usrcharges))
         for name, head, link, tail, charge in lipids:
             heads = head.replace(".", " ").split()
             linkers = link.replace(".", " ").split()
@@ -220,8 +220,8 @@ class Lipid_List(collections.MutableMapping):
 
 def get_lipids():
     liplist = Lipid_List()
-    for name, lip in lipidsa.items():
+    for name, lip in list(lipidsa.items()):
         moltype  = lip[0]
-        template = zip(lipidsx[moltype], lipidsy[moltype], lipidsz[moltype])
+        template = list(zip(lipidsx[moltype], lipidsy[moltype], lipidsz[moltype]))
         liplist[name] = Lipid(name=name, beads=lip[1], template=template)
     return liplist

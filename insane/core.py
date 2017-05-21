@@ -24,7 +24,7 @@ INSANE: A versatile tool for building membranes and/or solvent with proteins.
 ... Someone ought to write a more extensive docstring here...
 """
 
-from __future__ import print_function
+
 
 import os
 import sys
@@ -299,7 +299,7 @@ class Structure(object):
                 self.title = lines[0]
 
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.atoms)
 
     def __len__(self):
@@ -323,7 +323,7 @@ class Structure(object):
                         .format(self.__class__, other.__class__))
 
     def __iter__(self):
-        atom_enumeration = enumerate(zip(self.atoms, self.coord), start=1)
+        atom_enumeration = enumerate(list(zip(self.atoms, self.coord)), start=1)
         for idx, (atom, (x, y, z)) in atom_enumeration:
             atname, resname, resid = atom[:3]
             if resname.endswith('.o'):
@@ -440,7 +440,7 @@ class Structure(object):
         #cgofile.write(']\n')
         #cgofile.close()
 
-        sx, sy, sz, w = zip(*surface)
+        sx, sy, sz, w = list(zip(*surface))
         W             = 1.0/sum(w)
 
         # Weighted center of apolar region; has to go to (0, 0, 0)
@@ -450,10 +450,10 @@ class Structure(object):
 
         # Place apolar center at origin
         self.center = (-sxm, -sym, -szm)
-        sx, sy, sz    = zip(*[(i-sxm, j-sym, k-szm) for i, j, k in zip(sx, sy, sz)])
+        sx, sy, sz    = list(zip(*[(i-sxm, j-sym, k-szm) for i, j, k in zip(sx, sy, sz)]))
 
         # Determine weighted deviations from centers
-        dx, dy, dz      = zip(*[(m*i, m*j, m*k) for m, i, j, k in zip(w, sx, sy, sz)])
+        dx, dy, dz      = list(zip(*[(m*i, m*j, m*k) for m, i, j, k in zip(w, sx, sy, sz)]))
 
         # Covariance matrix for surface
         xx, yy, zz, xy, yz, zx = [sum(p)*W
@@ -666,7 +666,7 @@ def setup_solvent(pbc, protein, membrane, options):
     # (like when mixing a 1M solution of this with a 1M solution of that
 
     # First get names and relative numbers for each solvent
-    solnames, solabs, solnums = zip(*solv)
+    solnames, solabs, solnums = list(zip(*solv))
     solnames, solnums = list(solnames), list(solnums)
     totS       = float(sum(solnums))
 
@@ -743,7 +743,7 @@ def setup_solvent(pbc, protein, membrane, options):
             solcoord.append((x, y, z))
     sol.coord = solcoord
 
-    return sol, zip(solnames, num_sol)
+    return sol, list(zip(solnames, num_sol))
 
 
 def setup_membrane(pbc, protein, lipid, options):
@@ -981,13 +981,13 @@ def setup_membrane(pbc, protein, lipid, options):
     # Upper leaflet (+1)
     numbers = determine_molecule_numbers(len(upper), lipU, absU, relU)
     lip_up     = [l for l, i in numbers for j in range(i)]
-    leaf_up    = ( 1, zip(lip_up, upper), up_lipd, up_lipdx, up_lipdy)
+    leaf_up    = ( 1, list(zip(lip_up, upper)), up_lipd, up_lipdx, up_lipdy)
     molecules.extend(numbers)
 
     # Lower leaflet (-1)
     numbers = determine_molecule_numbers(len(lower), lipL, absL, relL)
     lip_lo = [l for l, i in numbers for j in range(i)]
-    leaf_lo = (-1, zip(lip_lo, lower), lo_lipd, lo_lipdx, lo_lipdy)
+    leaf_lo = (-1, list(zip(lip_lo, lower)), lo_lipd, lo_lipdx, lo_lipdy)
     molecules.extend(numbers)
 
     ##< Done determining numbers per lipid
@@ -1028,7 +1028,7 @@ def setup_membrane(pbc, protein, lipid, options):
             rsinx    = rsin*lipdx*2/3
             rsiny    = rsin*lipdy*2/3
             # Fetch the atom list with x, y, z coordinates
-            at, ax, ay, az = zip(*liplist[lipid].build(diam=lipd))
+            at, ax, ay, az = list(zip(*liplist[lipid].build(diam=lipd)))
             # The z-coordinates are spaced at 0.3 nm,
             # starting with the first bead at 0.15 nm
             az = [ leaflet*(0.5+(i-min(az)))*options["beaddist"] for i in az ]
@@ -1136,9 +1136,9 @@ def old_main(**options):
     relU, relL, absU, absL = [], [], [], []
     if lipL:
         lipU = lipU or lipL
-        lipL, absL, relL = zip(*lipL)
+        lipL, absL, relL = list(zip(*lipL))
         totL       = float(sum(relL))
-        lipU, absU, relU = zip(*lipU)
+        lipU, absU, relU = list(zip(*lipU))
         totU       = float(sum(relU))
     else:
         options["solexcl"] = -1

@@ -33,7 +33,7 @@ ran usinf pytest or nosetest, this executes insane with a series of arguments
 and compares the output to the reference.
 """
 
-from __future__ import print_function
+
 
 import contextlib
 import functools
@@ -54,7 +54,7 @@ import insane.cli
 import utils
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
     from io import StringIO
 

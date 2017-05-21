@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA  02110-1301, USA.
 
-from __future__ import print_function
+
 
 import copy
 from collections import namedtuple
@@ -30,7 +30,7 @@ import sys
 import tempfile
 
 try:
-    from StringIO import StringIO
+    from io import StringIO
 except ImportError:
     from io import StringIO
 
@@ -178,7 +178,7 @@ def read_gro(stream):
         if atom_count == natoms:
             break
         atoms.append({key: convert(line[begin:end].strip())
-                      for key, ((begin, end), convert) in GRO_FIELDS.items()})
+                      for key, ((begin, end), convert) in list(GRO_FIELDS.items())})
     else:
         raise ValueError('Box missing or invalid number of atoms declared.')
 
@@ -253,7 +253,7 @@ def compare_gro(stream, ref_stream, tolerance=0.001):
             # Both the atom and the reference atoms are defined.
             # We compare the fields.
             diff_fields = []
-            for gro_field, (_, gro_type) in GRO_FIELDS.items():
+            for gro_field, (_, gro_type) in list(GRO_FIELDS.items()):
                 if gro_type == float:
                     # The field is a float, we compare with a tolerance.
                     error = math.fabs(atom[gro_field] - atom_ref[gro_field])
